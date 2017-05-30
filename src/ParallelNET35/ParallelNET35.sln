@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallelNET35", "ParallelNE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\..\..\parallel_src\Sources\Core\Core.csproj", "{631AC093-430F-45F4-BA0C-AF0F0405918A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallelNET35Tests", "..\ParallelNET35Tests\ParallelNET35Tests.csproj", "{B9BAFC62-7F25-4553-A0F7-00D9B2EB4C08}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{631AC093-430F-45F4-BA0C-AF0F0405918A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{631AC093-430F-45F4-BA0C-AF0F0405918A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{631AC093-430F-45F4-BA0C-AF0F0405918A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9BAFC62-7F25-4553-A0F7-00D9B2EB4C08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9BAFC62-7F25-4553-A0F7-00D9B2EB4C08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9BAFC62-7F25-4553-A0F7-00D9B2EB4C08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9BAFC62-7F25-4553-A0F7-00D9B2EB4C08}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
