@@ -53,6 +53,9 @@ namespace ParallelNET35
         }
 
 
+        
+
+
 
         public class ParallelLoopState
         {
@@ -72,7 +75,7 @@ namespace ParallelNET35
 
 
         /// <summary>
-        /// Executes a for loop in which iterations may run in parallel.
+        /// Executes a for loop in which iterations may run in parallel and the state of the loop may be monitored and manipulated.
         /// </summary>
         /// <param name="fromInclusive">The start index, inclusive.</param>
         /// <param name="toExclusive">The end index, exclusive.</param>
@@ -116,5 +119,107 @@ namespace ParallelNET35
             }
 
         }
+
+
+        /// <summary>
+        /// Executes a for loop with 64-bit indexes in which iterations may run in parallel.
+        /// </summary>
+        /// <param name="fromInclusive">The start index, inclusive.</param>
+        /// <param name="toExclusive">The end index, exclusive.</param>
+        /// <param name="body">The delegate that is invoked once per iteration.</param>
+        public static void For(long fromInclusive, long toExclusive, Action<long> body)
+        {
+            int threadCount = Environment.ProcessorCount;
+            object locker = new object();
+            long currentIndex = fromInclusive;
+            Thread[] threads = new Thread[threadCount];
+
+            for (int i = 0; i < threadCount; i++)
+            {
+                threads[i] = new Thread(new ParameterizedThreadStart(
+                    (block) =>
+                    {
+                        Action<long> todo = (Action<long>)block;
+                        long threadsCurrentIndex;
+                        while (true)
+                        {
+                            lock (locker)
+                            {
+                                if (currentIndex >= toExclusive) return;
+                                else
+                                {
+                                    threadsCurrentIndex = currentIndex;
+                                    currentIndex++;
+                                }
+                            }
+                            todo.Invoke(threadsCurrentIndex);
+                        }
+                    }));
+                threads[i].Start(body);
+            }
+
+            for (int i = 0; i < threadCount; i++)
+            {
+                threads[i].Join();
+            }
+
+        }
+
+
+
+
+
+        /// <summary>
+        /// Executes a for loop with 64-bit indexes in which iterations may run in parallel and the state of the loop may be monitored and manipulated.
+        /// </summary>
+        /// <param name="fromInclusive">The start index, inclusive.</param>
+        /// <param name="toExclusive">The end index, exclusive.</param>
+        /// <param name="body">The delegate that is invoked once per iteration.</param>
+        public static void For(long fromInclusive, long toExclusive, Action<long, ParallelLoopState> body)
+        {
+            int threadCount = Environment.ProcessorCount;
+            object locker = new object();
+            long currentIndex = fromInclusive;
+            Thread[] threads = new Thread[threadCount];
+            ParallelLoopState state = new ParallelLoopState();
+
+            for (int i = 0; i < threadCount; i++)
+            {
+                threads[i] = new Thread(new ParameterizedThreadStart(
+                    (block) =>
+                    {
+                        Action<long, ParallelLoopState> todo = (Action<long, ParallelLoopState>)block;
+                        long threadsCurrentIndex;
+                        while (true)
+                        {
+                            if (state.stop) return;
+                            lock (locker)
+                            {
+                                if (currentIndex >= toExclusive) return;
+                                else
+                                {
+                                    threadsCurrentIndex = currentIndex;
+                                    currentIndex++;
+                                }
+                            }
+                            todo.Invoke(threadsCurrentIndex, state);
+                        }
+                    }));
+                threads[i].Start(body);
+            }
+
+            for (int i = 0; i < threadCount; i++)
+            {
+                threads[i].Join();
+            }
+
+        }
+
+
+
+
+
+
+
     }
 }
