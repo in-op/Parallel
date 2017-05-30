@@ -39,13 +39,11 @@ namespace ParallelNET35
                 threads[i].Start(loopBlock);
             }
 
-
             for (int i = 0; i < threadCount; i++)
             {
                 threads[i].Join();
             }
-
-
+            
         }
     }
 }
