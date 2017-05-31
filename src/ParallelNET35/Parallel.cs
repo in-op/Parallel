@@ -59,15 +59,31 @@ namespace ParallelNET35
 
         public class ParallelLoopState
         {
-            internal bool stop = false;
             internal readonly object locker = new object();
+
+            private bool stopTriggered = false;
+            internal bool StopTriggered
+            {
+                get
+                {
+                    lock (locker)
+                    {
+                        return stopTriggered;
+                    }
+                }
+
+                private set
+                {
+                    lock (locker)
+                    {
+                        stopTriggered = value;
+                    }
+                }
+            }
 
             public void Stop()
             {
-                lock (locker)
-                {
-                    stop = true;
-                }
+                StopTriggered = true;
             }
 
             internal ParallelLoopState() { }
@@ -97,7 +113,7 @@ namespace ParallelNET35
                         int threadsCurrentIndex;
                         while (true)
                         {
-                            if (state.stop) return;
+                            if (state.StopTriggered) return;
                             lock (locker)
                             {
                                 if (currentIndex >= toExclusive) return;
@@ -192,7 +208,7 @@ namespace ParallelNET35
                         long threadsCurrentIndex;
                         while (true)
                         {
-                            if (state.stop) return;
+                            if (state.StopTriggered) return;
                             lock (locker)
                             {
                                 if (currentIndex >= toExclusive) return;
@@ -253,7 +269,7 @@ namespace ParallelNET35
                         int threadsCurrentIndex;
                         while (true)
                         {
-                            if (state.stop) break;
+                            if (state.StopTriggered) break;
                             lock (locker)
                             {
                                 if (currentIndex >= toExclusive) break;
@@ -309,7 +325,7 @@ namespace ParallelNET35
                         long threadsCurrentIndex;
                         while (true)
                         {
-                            if (state.stop) break;
+                            if (state.StopTriggered) break;
                             lock (locker)
                             {
                                 if (currentIndex >= toExclusive) break;
