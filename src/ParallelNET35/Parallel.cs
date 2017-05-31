@@ -336,6 +336,34 @@ namespace ParallelNET35
 
 
 
+        private static void Invoke(params Action[] actions)
+        {
+            int threadCount = Environment.ProcessorCount;
+            int actionCount = actions.Length;
+            Thread[] threads = new Thread[actionCount];
+
+            if (threadCount >= actionCount)
+            {
+                for (int i = 0; i < actionCount; i++)
+                {
+                    threads[i] = new Thread(new ThreadStart(actions[i]));
+                    threads[i].Start();
+                }
+                for (int i = 0; i < actionCount; i++)
+                {
+                    threads[i].Join();
+                }
+            }
+
+            else
+            {
+
+            }
+        }
+
+
+
+
 
 
 
