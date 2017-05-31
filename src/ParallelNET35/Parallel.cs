@@ -349,7 +349,7 @@ namespace ParallelNET35
 
 
         /// <summary>
-        /// Executes each action in a separate thread.
+        /// Executes each action in parallel.
         /// </summary>
         /// <param name="actions">The set of delegates to invoke.</param>
         public static void Invoke(params Action[] actions)
