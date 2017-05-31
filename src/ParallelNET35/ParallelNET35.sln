@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallelNET35", "ParallelNET35.csproj", "{83408AC7-BDD7-4A70-BE20-AEC5C3B973CE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\..\..\parallel_src\Sources\Core\Core.csproj", "{631AC093-430F-45F4-BA0C-AF0F0405918A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallelNET35Tests", "..\ParallelNET35Tests\ParallelNET35Tests.csproj", "{B9BAFC62-7F25-4553-A0F7-00D9B2EB4C08}"
 EndProject
@@ -19,10 +17,6 @@ Global
 		{83408AC7-BDD7-4A70-BE20-AEC5C3B973CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83408AC7-BDD7-4A70-BE20-AEC5C3B973CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83408AC7-BDD7-4A70-BE20-AEC5C3B973CE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{631AC093-430F-45F4-BA0C-AF0F0405918A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{631AC093-430F-45F4-BA0C-AF0F0405918A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{631AC093-430F-45F4-BA0C-AF0F0405918A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{631AC093-430F-45F4-BA0C-AF0F0405918A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B9BAFC62-7F25-4553-A0F7-00D9B2EB4C08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B9BAFC62-7F25-4553-A0F7-00D9B2EB4C08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9BAFC62-7F25-4553-A0F7-00D9B2EB4C08}.Release|Any CPU.ActiveCfg = Release|Any CPU
