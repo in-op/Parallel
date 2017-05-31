@@ -226,7 +226,10 @@ namespace ParallelNET35
         /// </summary>
         /// <param name="fromInclusive">The start index, inclusive.</param>
         /// <param name="toExclusive">The end index, exclusive.</param>
+        /// <param name="localInit">The function delegate that returns the initial state of the local data for each task.</param>
         /// <param name="body">The delegate that is invoked once per iteration.</param>
+        /// <param name="localFinally">The delegate that performs a final action on the local state of each task.</param>
+        /// <typeparam name="TLocal">The type of the thread-local data.</typeparam>
         public static void For<TLocal>(
             int fromInclusive,
             int toExclusive,
@@ -279,7 +282,10 @@ namespace ParallelNET35
         /// </summary>
         /// <param name="fromInclusive">The start index, inclusive.</param>
         /// <param name="toExclusive">The end index, exclusive.</param>
+        /// <param name="localInit">The function delegate that returns the initial state of the local data for each task.</param>
         /// <param name="body">The delegate that is invoked once per iteration.</param>
+        /// <param name="localFinally">The delegate that performs a final action on the local state of each task.</param>
+        /// <typeparam name="TLocal">The type of the thread-local data.</typeparam>
         public static void For<TLocal>(
             long fromInclusive,
             long toExclusive,
