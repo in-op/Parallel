@@ -30,6 +30,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>4</LangVersion>
+    <DocumentationFile>bin\Release\ParallelNET35.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
