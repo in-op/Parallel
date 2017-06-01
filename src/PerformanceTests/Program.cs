@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Diagnostics;
+using Performance;
 
 namespace PerformanceTests
 {
@@ -19,25 +19,9 @@ namespace PerformanceTests
 
         static void Main(string[] args)
         {
-            Stopwatch sw = new Stopwatch();
-
-            
-            sw.Reset();
-            sw.Start();
-            ParallelNET35.Parallel.Invoke(Spin, Spin);
-            sw.Stop();
-            Console.WriteLine("multi-threaded: " + sw.ElapsedMilliseconds);
-
-
-            sw.Reset();
-            sw.Start();
-            Spin();
-            Spin();
-            sw.Stop();
-            Console.WriteLine("single-threaded: " + sw.ElapsedMilliseconds);
-
-
-            Console.ReadLine();
+            Timer.RunAndDisplay(0, 1,
+                () => { ParallelNET35.Parallel.Invoke(Spin, Spin); },
+                () => { Spin(); Spin(); });
         }
     }
 }
