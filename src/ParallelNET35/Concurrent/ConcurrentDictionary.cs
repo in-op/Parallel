@@ -13,6 +13,17 @@ namespace ParallelNET35.Concurrent
         private readonly object locker = new object();
         private Dictionary<TKey, TValue> dict;
 
+
+        public ConcurrentDictionary(int capacity)
+        {
+            dict = new Dictionary<TKey, TValue>(capacity);
+        }
+
+        public ConcurrentDictionary()
+        {
+            dict = new Dictionary<TKey, TValue>();
+        }
+
         /// <summary>
         /// Gets the number of key/value pairs contained within.
         /// </summary>
