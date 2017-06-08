@@ -16,12 +16,18 @@ namespace ParallelNET35.Concurrent
 
         public ConcurrentDictionary(int capacity)
         {
-            dict = new Dictionary<TKey, TValue>(capacity);
+            lock (locker)
+            {
+                dict = new Dictionary<TKey, TValue>(capacity);
+            }
         }
 
         public ConcurrentDictionary()
         {
-            dict = new Dictionary<TKey, TValue>();
+            lock (locker)
+            {
+                dict = new Dictionary<TKey, TValue>();
+            }
         }
 
         /// <summary>
