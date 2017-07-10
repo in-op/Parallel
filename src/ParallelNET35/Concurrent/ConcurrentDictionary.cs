@@ -143,6 +143,37 @@ namespace ParallelNET35.Concurrent
             }
         }
 
+        /// <summary>
+        /// Adds a key/value pair to the ConcurrentDictionary&lt;TKey, TValue&gt;
+        /// if the key does not already exist, or updates a key/value pair
+        /// in the ConcurrentDictionary&lt;TKey, TValue&gt; by using the
+        /// specified function if the key already exists.
+        /// </summary>
+        /// <param name="key">The key to be added or whose value should be updated.</param>
+        /// <param name="addValue">The value to be added for an absent key.</param>
+        /// <param name="updateValueFactory">The function used to generate a new value
+        /// for an existing key based on the key's existing value.</param>
+        /// <returns></returns>
+        public TValue AddOrUpdate(
+            TKey key,
+            TValue addValue,
+            Func<TKey, TValue, TValue> updateValueFactory)
+        {
+            lock (locker)
+            {
+                if (!dict.ContainsKey(key))
+                {
+                    dict[key] = addValue;
+                    return addValue;
+                }
+                else
+                {
+                    dict[key] = updateValueFactory(key, dict[key]);
+                    return dict[key];
+                }
+            }
+        }
+
 
     }
 }
