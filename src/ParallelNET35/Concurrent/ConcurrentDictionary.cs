@@ -153,7 +153,8 @@ namespace ParallelNET35.Concurrent
         /// <param name="addValue">The value to be added for an absent key.</param>
         /// <param name="updateValueFactory">The function used to generate a new value
         /// for an existing key based on the key's existing value.</param>
-        /// <returns></returns>
+        /// <returns>The new value for the key. This will be either be addValue
+        /// (if the key was absent) or the result of updateValueFactory (if the key was present).</returns>
         public TValue AddOrUpdate(
             TKey key,
             TValue addValue,
@@ -161,19 +162,35 @@ namespace ParallelNET35.Concurrent
         {
             lock (locker)
             {
-                if (!dict.ContainsKey(key))
-                {
-                    dict[key] = addValue;
-                    return addValue;
-                }
-                else
-                {
-                    dict[key] = updateValueFactory(key, dict[key]);
-                    return dict[key];
-                }
+                dict[key] = dict.ContainsKey(key) ?
+                    updateValueFactory(key, dict[key]) :
+                    addValue;
+                return dict[key];
             }
         }
 
-
+        /// <summary>
+        /// Uses the specified functions to add a key/value pair to the
+        /// ConcurrentDictionary&lt;TKey, TValue&gt; if the key does not
+        /// already exist, or to update a key/value pair in the
+        /// ConcurrentDictionary&lt;TKey, TValue&gt; if the key already exists.
+        /// </summary>
+        /// <param name="key">The key to be added or whose value should be updated.</param>
+        /// <param name="addValueFactory">The function used to generate a value for an absent key.</param>
+        /// <param name="updateValueFactory">The function used to generate a new value for an existing key based on the key's existing value.</param>
+        /// <returns></returns>
+        public TValue AddOrUpdate(
+            TKey key,
+            Func<TKey, TValue> addValueFactory,
+            Func<TKey, TValue, TValue> updateValueFactory)
+        {
+            lock (locker)
+            {
+                dict[key] = dict.ContainsKey(key) ?
+                    updateValueFactory(key, dict[key]) :
+                    addValueFactory(key);
+                return dict[key];
+            }
+        }
     }
 }
