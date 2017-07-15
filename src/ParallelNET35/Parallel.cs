@@ -56,25 +56,17 @@ namespace ParallelNET35
 
         public class ParallelLoopState
         {
-            internal readonly object locker = new object();
-
             private bool stopTriggered = false;
             internal bool StopTriggered
             {
                 get
                 {
-                    lock (locker)
-                    {
-                        return stopTriggered;
-                    }
+                    return stopTriggered;
                 }
 
                 private set
                 {
-                    lock (locker)
-                    {
-                        stopTriggered = value;
-                    }
+                    stopTriggered = value;
                 }
             }
 

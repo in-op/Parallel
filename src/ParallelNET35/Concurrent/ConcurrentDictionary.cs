@@ -16,18 +16,12 @@ namespace ParallelNET35.Concurrent
 
         public ConcurrentDictionary(int capacity)
         {
-            lock (locker)
-            {
-                dict = new Dictionary<TKey, TValue>(capacity);
-            }
+            dict = new Dictionary<TKey, TValue>(capacity);
         }
 
         public ConcurrentDictionary()
         {
-            lock (locker)
-            {
-                dict = new Dictionary<TKey, TValue>();
-            }
+            dict = new Dictionary<TKey, TValue>();
         }
 
         /// <summary>
@@ -114,6 +108,14 @@ namespace ParallelNET35.Concurrent
         /// <returns></returns>
         public KeyValuePair<TKey, TValue>[] ToArray()
         {
+            lock(locker)
+            {
+                var keys = dict.Keys;
+                var values = dict.Values;
+                int count = dict.Count;
+            }
+
+
             lock (locker)
             {
                 var output = new KeyValuePair<TKey, TValue>[dict.Count];
