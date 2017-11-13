@@ -17,7 +17,7 @@ namespace ParallelNET35
             Thread[] threads = new Thread[threadCount];
             --fromInclusive;
 
-            Action a = () =>
+            Action threadWork = () =>
             {
                 int index;
                 while (true)
@@ -30,7 +30,7 @@ namespace ParallelNET35
 
             for (int i = 0; i < threadCount; i++)
             {
-                threads[i] = new Thread(new ThreadStart(a));
+                threads[i] = new Thread(new ThreadStart(threadWork));
                 threads[i].Start();
             }
 
@@ -38,7 +38,6 @@ namespace ParallelNET35
             {
                 threads[i].Join();
             }
-            
         }
 
 
@@ -46,28 +45,14 @@ namespace ParallelNET35
 
 
 
-        public class ParallelLoopState
+        public sealed class State
         {
-            private bool stopTriggered = false;
-            internal bool StopTriggered
-            {
-                get
-                {
-                    return stopTriggered;
-                }
-
-                private set
-                {
-                    stopTriggered = value;
-                }
-            }
+            internal bool StopTriggered;
 
             public void Stop()
             {
                 StopTriggered = true;
             }
-
-            internal ParallelLoopState() { }
         }
 
 
@@ -77,44 +62,35 @@ namespace ParallelNET35
         /// <param name="fromInclusive">The start index, inclusive.</param>
         /// <param name="toExclusive">The end index, exclusive.</param>
         /// <param name="body">The delegate that is invoked once per iteration.</param>
-        public static void For(int fromInclusive, int toExclusive, Action<int, ParallelLoopState> body)
+        public static void For(int fromInclusive, int toExclusive, Action<int, State> body)
         {
             int threadCount = Environment.ProcessorCount;
-            object locker = new object();
-            int currentIndex = fromInclusive;
             Thread[] threads = new Thread[threadCount];
-            ParallelLoopState state = new ParallelLoopState();
+            State state = new State();
+            --fromInclusive;
+
+            Action threadWork = () =>
+            {
+                int index;
+                while (true)
+                {
+                    if (state.StopTriggered) return;
+                    index = Interlocked.Increment(ref fromInclusive);
+                    if (index >= toExclusive) return;
+                    body.Invoke(index, state);
+                }
+            };
 
             for (int i = 0; i < threadCount; i++)
             {
-                threads[i] = new Thread(new ParameterizedThreadStart(
-                    (block) =>
-                    {
-                        Action<int, ParallelLoopState> todo = (Action<int, ParallelLoopState>)block;
-                        int threadsCurrentIndex;
-                        while (true)
-                        {
-                            if (state.StopTriggered) return;
-                            lock (locker)
-                            {
-                                if (currentIndex >= toExclusive) return;
-                                else
-                                {
-                                    threadsCurrentIndex = currentIndex;
-                                    currentIndex++;
-                                }
-                            }
-                            todo.Invoke(threadsCurrentIndex, state);
-                        }
-                    }));
-                threads[i].Start(body);
+                threads[i] = new Thread(new ThreadStart(threadWork));
+                threads[i].Start();
             }
 
             for (int i = 0; i < threadCount; i++)
             {
                 threads[i].Join();
             }
-
         }
 
 
@@ -127,32 +103,24 @@ namespace ParallelNET35
         public static void For(long fromInclusive, long toExclusive, Action<long> body)
         {
             int threadCount = Environment.ProcessorCount;
-            object locker = new object();
-            long currentIndex = fromInclusive;
             Thread[] threads = new Thread[threadCount];
+            --fromInclusive;
+
+            Action threadWork = () =>
+            {
+                long index;
+                while (true)
+                {
+                    index = Interlocked.Increment(ref fromInclusive);
+                    if (index >= toExclusive) return;
+                    body.Invoke(index);
+                }
+            };
 
             for (int i = 0; i < threadCount; i++)
             {
-                threads[i] = new Thread(new ParameterizedThreadStart(
-                    (block) =>
-                    {
-                        Action<long> todo = (Action<long>)block;
-                        long threadsCurrentIndex;
-                        while (true)
-                        {
-                            lock (locker)
-                            {
-                                if (currentIndex >= toExclusive) return;
-                                else
-                                {
-                                    threadsCurrentIndex = currentIndex;
-                                    currentIndex++;
-                                }
-                            }
-                            todo.Invoke(threadsCurrentIndex);
-                        }
-                    }));
-                threads[i].Start(body);
+                threads[i] = new Thread(new ThreadStart(threadWork));
+                threads[i].Start();
             }
 
             for (int i = 0; i < threadCount; i++)
@@ -172,44 +140,35 @@ namespace ParallelNET35
         /// <param name="fromInclusive">The start index, inclusive.</param>
         /// <param name="toExclusive">The end index, exclusive.</param>
         /// <param name="body">The delegate that is invoked once per iteration.</param>
-        public static void For(long fromInclusive, long toExclusive, Action<long, ParallelLoopState> body)
+        public static void For(long fromInclusive, long toExclusive, Action<long, State> body)
         {
             int threadCount = Environment.ProcessorCount;
-            object locker = new object();
-            long currentIndex = fromInclusive;
             Thread[] threads = new Thread[threadCount];
-            ParallelLoopState state = new ParallelLoopState();
+            State state = new State();
+            --fromInclusive;
+
+            Action threadWork = () =>
+            {
+                long index;
+                while (true)
+                {
+                    if (state.StopTriggered) return;
+                    index = Interlocked.Increment(ref fromInclusive);
+                    if (index >= toExclusive) return;
+                    body.Invoke(index, state);
+                }
+            };
 
             for (int i = 0; i < threadCount; i++)
             {
-                threads[i] = new Thread(new ParameterizedThreadStart(
-                    (block) =>
-                    {
-                        Action<long, ParallelLoopState> todo = (Action<long, ParallelLoopState>)block;
-                        long threadsCurrentIndex;
-                        while (true)
-                        {
-                            if (state.StopTriggered) return;
-                            lock (locker)
-                            {
-                                if (currentIndex >= toExclusive) return;
-                                else
-                                {
-                                    threadsCurrentIndex = currentIndex;
-                                    currentIndex++;
-                                }
-                            }
-                            todo.Invoke(threadsCurrentIndex, state);
-                        }
-                    }));
-                threads[i].Start(body);
+                threads[i] = new Thread(new ThreadStart(threadWork));
+                threads[i].Start();
             }
 
             for (int i = 0; i < threadCount; i++)
             {
                 threads[i].Join();
             }
-
         }
 
 
@@ -231,39 +190,31 @@ namespace ParallelNET35
             int fromInclusive,
             int toExclusive,
             Func<TLocal> localInit,
-            Func<int, ParallelLoopState, TLocal, TLocal> body,
+            Func<int, State, TLocal, TLocal> body,
             Action<TLocal> localFinally)
         {
             int threadCount = Environment.ProcessorCount;
-            object locker = new object();
-            int currentIndex = fromInclusive;
             Thread[] threads = new Thread[threadCount];
-            ParallelLoopState state = new ParallelLoopState();
+            State state = new State();
+            --fromInclusive;
+
+            Action threadWork = () =>
+            {
+                TLocal localVars = localInit.Invoke();
+                int index;
+                while (true)
+                {
+                    if (state.StopTriggered) break;
+                    index = Interlocked.Increment(ref fromInclusive);
+                    if (index >= toExclusive) break;
+                    localVars = body.Invoke(index, state, localVars);
+                }
+                localFinally.Invoke(localVars);
+            };
 
             for (int i = 0; i < threadCount; i++)
             {
-                threads[i] = new Thread(new ParameterizedThreadStart(
-                    (block) =>
-                    {
-                        TLocal localVars = localInit.Invoke();
-                        Func<int, ParallelLoopState, TLocal, TLocal> todo = (Func<int, ParallelLoopState, TLocal, TLocal>)block;
-                        int threadsCurrentIndex;
-                        while (true)
-                        {
-                            if (state.StopTriggered) break;
-                            lock (locker)
-                            {
-                                if (currentIndex >= toExclusive) break;
-                                else
-                                {
-                                    threadsCurrentIndex = currentIndex;
-                                    currentIndex++;
-                                }
-                            }
-                            localVars = todo.Invoke(threadsCurrentIndex, state, localVars);
-                        }
-                        localFinally.Invoke(localVars);
-                    }));
+                threads[i] = new Thread(new ThreadStart(threadWork));
                 threads[i].Start(body);
             }
 
@@ -271,7 +222,6 @@ namespace ParallelNET35
             {
                 threads[i].Join();
             }
-
         }
 
         /// <summary>
@@ -287,39 +237,31 @@ namespace ParallelNET35
             long fromInclusive,
             long toExclusive,
             Func<TLocal> localInit,
-            Func<long, ParallelLoopState, TLocal, TLocal> body,
+            Func<long, State, TLocal, TLocal> body,
             Action<TLocal> localFinally)
         {
             int threadCount = Environment.ProcessorCount;
-            object locker = new object();
-            long currentIndex = fromInclusive;
             Thread[] threads = new Thread[threadCount];
-            ParallelLoopState state = new ParallelLoopState();
+            State state = new State();
+            --fromInclusive;
+
+            Action threadWork = () =>
+            {
+                TLocal localVars = localInit.Invoke();
+                long index;
+                while (true)
+                {
+                    if (state.StopTriggered) break;
+                    index = Interlocked.Increment(ref fromInclusive);
+                    if (index >= toExclusive) break;
+                    localVars = body.Invoke(index, state, localVars);
+                }
+                localFinally.Invoke(localVars);
+            };
 
             for (int i = 0; i < threadCount; i++)
             {
-                threads[i] = new Thread(new ParameterizedThreadStart(
-                    (block) =>
-                    {
-                        TLocal localVars = localInit.Invoke();
-                        Func<long, ParallelLoopState, TLocal, TLocal> todo = (Func<long, ParallelLoopState, TLocal, TLocal>)block;
-                        long threadsCurrentIndex;
-                        while (true)
-                        {
-                            if (state.StopTriggered) break;
-                            lock (locker)
-                            {
-                                if (currentIndex >= toExclusive) break;
-                                else
-                                {
-                                    threadsCurrentIndex = currentIndex;
-                                    currentIndex++;
-                                }
-                            }
-                            localVars = todo.Invoke(threadsCurrentIndex, state, localVars);
-                        }
-                        localFinally.Invoke(localVars);
-                    }));
+                threads[i] = new Thread(new ThreadStart(threadWork));
                 threads[i].Start(body);
             }
 
@@ -327,7 +269,6 @@ namespace ParallelNET35
             {
                 threads[i].Join();
             }
-
         }
 
 
