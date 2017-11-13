@@ -32,7 +32,7 @@ namespace ParallelNET35
             for (int i = 0; i < threadCount; i++)
             {
                 threads[i] = new Thread(new ThreadStart(a));
-                threads[i].Start(body);
+                threads[i].Start();
             }
 
             for (int i = 0; i < threadCount; i++)
