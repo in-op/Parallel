@@ -15,30 +15,23 @@ namespace ParallelNET35
         {
             int threadCount = Environment.ProcessorCount;
             object locker = new object();
-            int currentIndex = fromInclusive;
             Thread[] threads = new Thread[threadCount];
+            --fromInclusive;
+
+            Action a = () =>
+            {
+                int index;
+                while (true)
+                {
+                    index = Interlocked.Increment(ref fromInclusive);
+                    if (index >= toExclusive) return;
+                    body.Invoke(index);
+                }
+            };
 
             for (int i = 0; i < threadCount; i++)
             {
-                threads[i] = new Thread(new ParameterizedThreadStart(
-                    (block) =>
-                    {
-                        Action<int> todo = (Action<int>)block;
-                        int threadsCurrentIndex;
-                        while (true)
-                        {
-                            lock (locker)
-                            {
-                                if (currentIndex >= toExclusive) return;
-                                else
-                                {
-                                    threadsCurrentIndex = currentIndex;
-                                    currentIndex++;
-                                }
-                            }
-                            todo.Invoke(threadsCurrentIndex);
-                        }
-                    }));
+                threads[i] = new Thread(new ThreadStart(a));
                 threads[i].Start(body);
             }
 
