@@ -14,7 +14,6 @@ namespace ParallelNET35
         public static void For(int fromInclusive, int toExclusive, Action<int> body)
         {
             int threadCount = Environment.ProcessorCount;
-            object locker = new object();
             Thread[] threads = new Thread[threadCount];
             --fromInclusive;
 
