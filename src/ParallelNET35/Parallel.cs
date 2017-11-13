@@ -39,23 +39,7 @@ namespace ParallelNET35
                 threads[i].Join();
             }
         }
-
-
         
-
-
-
-        public sealed class State
-        {
-            internal bool StopTriggered;
-
-            public void Stop()
-            {
-                StopTriggered = true;
-            }
-        }
-
-
         /// <summary>
         /// Executes a for loop in which iterations may run in parallel and the state of the loop may be monitored and manipulated.
         /// </summary>
@@ -272,7 +256,6 @@ namespace ParallelNET35
         }
 
 
-
         /// <summary>
         /// Executes each action in parallel.
         /// </summary>
@@ -297,6 +280,18 @@ namespace ParallelNET35
 
 
 
+
+
+
+        public sealed class State
+        {
+            internal bool StopTriggered;
+
+            public void Stop()
+            {
+                StopTriggered = true;
+            }
+        }
 
 
     }
