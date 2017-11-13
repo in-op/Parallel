@@ -3,6 +3,9 @@ using System.Threading;
 
 namespace ParallelNET35
 {
+    /// <summary>
+    /// Defines methods for parallel for loops.
+    /// </summary>
     public static class Parallel
     {
         /// <summary>
@@ -282,11 +285,16 @@ namespace ParallelNET35
 
 
 
-
+        /// <summary>
+        /// Helper class to monitor and control the loop.
+        /// </summary>
         public sealed class State
         {
             internal bool StopTriggered;
 
+            /// <summary>
+            /// Command the loop to exit as soon as possible.
+            /// </summary>
             public void Stop()
             {
                 StopTriggered = true;
