@@ -14,32 +14,43 @@ namespace ParallelNET35.Tests
         [TestMethod()]
         public void ForCorrectlyFillsArrayWithAValue()
         {
-            byte comparison = 42;
-            int size = 1000;
+            const byte item = 42;
+            const int size = 10000;
             byte[] bytes = new byte[size];
-            Parallel.For(0, size, (i) =>
-            {
-                bytes[i] = comparison;
-            });
+
+            Parallel.For(0, size, i => bytes[i] = item);
 
             for (int i = 0; i < size; i++)
-                if (bytes[i] != comparison)
+                if (bytes[i] != item)
+                    Assert.Fail();
+        }
+
+        [TestMethod()]
+        public void ForCorrectlyUpdatesArrayValues()
+        {
+            const byte item = 0;
+            const int size = 10000;
+            byte[] bytes = new byte[size];
+            for (int i = 0; i < size; i++)
+                bytes[i] = item;
+
+            Parallel.For(0, size, i => bytes[i] += 1);
+
+            for (int i = 0; i < size; i++)
+                if (bytes[i] != item + 1)
                     Assert.Fail();
         }
 
         [TestMethod()]
         public void ForWithStateCorrectlyFillsArrayWithAValue()
         {
-            byte comparison = 42;
-            int size = 1000;
+            const byte item = 42;
+            const int size = 1000;
             byte[] bytes = new byte[size];
-            Parallel.For(0, size, (i, state) =>
-            {
-                bytes[i] = comparison;
-            });
+            Parallel.For(0, size, (i, state) => bytes[i] = item);
 
             for (int i = 0; i < size; i++)
-                if (bytes[i] != comparison)
+                if (bytes[i] != item)
                     Assert.Fail();
         }
     }
